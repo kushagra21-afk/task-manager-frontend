@@ -24,7 +24,7 @@ const AddTask = () => {
     const token = localStorage.getItem('token'); // Get the token from localStorage
 
     try {
-      await axios.post('https://task-manager-xtbs.onrender.com/api/tasks', taskData, { // Ensure endpoint is correct
+      await axios.post('https://task-manager-xtbs.onrender.com/api/post', taskData, { // Ensure endpoint is correct
         headers: {
           Authorization: `Bearer ${token}`, // Attach the JWT token
           'Content-Type': 'application/json',
