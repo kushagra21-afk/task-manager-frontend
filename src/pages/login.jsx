@@ -1,10 +1,11 @@
-// src/pages/Login.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { fetchUnsplashImage } from '../utils/fetchImage';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [imageUrl, setImageUrl] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,51 +18,66 @@ const Login = () => {
     try {
       const response = await axios.post('https://task-manager-xtbs.onrender.com/api/auth/login', formData, {
         headers: {
-          'Content-Type': 'application/json', // Set content type to JSON
+          'Content-Type': 'application/json',
         },
       });
       
-      const { token, user } = response.data; // Destructure token and user from the response
+      const { token, user } = response.data;
 
-      // Store the token in localStorage
       localStorage.setItem('token', token);
-
-      // Optional: Store user information in localStorage (if needed)
       localStorage.setItem('user', JSON.stringify(user));
-      console.log(token,user)
-      // Redirect to tasks after successful login
+
       navigate('/tasks');
     } catch (error) {
       if (error.response) {
-        console.error('Login error:', error.response.data); // Log error response data
+        console.error('Login error:', error.response.data);
       } else {
-        console.error('Error:', error.message); // Log any other errors
+        console.error('Error:', error.message);
       }
     }
   };
 
+  useEffect(() => {
+    const getImage = async () => {
+      const image = await fetchUnsplashImage('beach');
+      setImageUrl(image);
+    };
+    getImage();
+  }, []);
+
+  const handleRegisterClick = () => {
+    navigate('/register');
+  };
+
   return (
-    <div className="container">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
+    <div className='main' style={{ backgroundImage: `url(${imageUrl})` }}>
+      <div className="container">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account?</p>
+        <button onClick={handleRegisterClick}>Register</button>
+      </div>
+      <div className='render'>
+        <p><b>Please be patient, the backend takes time to boot!</b></p>
+      </div>
     </div>
   );
 };

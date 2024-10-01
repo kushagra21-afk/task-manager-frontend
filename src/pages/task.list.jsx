@@ -1,25 +1,25 @@
-// src/pages/TaskList.js
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios'; // Import axios for API requests
-import { fetchUnsplashImage } from '../utils/fetchImage'; // Import the Unsplash image fetching function
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { fetchUnsplashImage } from '../utils/fetchImage';
 import "../styles.css";
 
 const TaskList = () => {
-  const [tasks, setTasks] = useState([]); // State to hold tasks
-  const [imageUrl, setImageUrl] = useState(''); // State to hold Unsplash image URL
+  const [tasks, setTasks] = useState([]);
+  const [imageUrl, setImageUrl] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const token = localStorage.getItem('token'); // Get the JWT token from localStorage
+      const token = localStorage.getItem('token');
 
       try {
-        const response = await axios.get('https://task-manager-xtbs.onrender.com/api/tasks', {
+        const response = await axios.get('https://task-manager-xtbs.onrender.com/api/post', {
           headers: {
-            Authorization: `Bearer ${token}`, // Attach the JWT token
+            Authorization: `Bearer ${token}`,
           },
         });
-        setTasks(response.data); // Set the tasks data from API response
+        setTasks(response.data);
       } catch (error) {
         console.error('Failed to fetch tasks:', error.response ? error.response.data : error.message);
       }
@@ -27,49 +27,55 @@ const TaskList = () => {
 
     const getImage = async () => {
       try {
-        const image = await fetchUnsplashImage('tasks'); // Fetch image for tasks
-        setImageUrl(image); // Set the fetched image URL
+        const image = await fetchUnsplashImage('tasks');
+        setImageUrl(image);
       } catch (error) {
         console.error('Failed to fetch Unsplash image:', error);
       }
     };
 
-    fetchTasks(); // Call the function to fetch tasks
-    getImage();   // Call the function to get the image
+    fetchTasks();
+    getImage();
   }, []);
 
-  // Background style for the task list
   const backgroundStyle = {
     backgroundImage: `url(${imageUrl})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    height: '100vh', // Full height of the viewport
-    width: '100vw',  // Full width of the viewport
+    height: '100vh',
+    width: '100vw',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     color: 'white',
-    textShadow: '1px 1px 5px rgba(0, 0, 0, 0.7)', // Add text shadow for readability
+    textShadow: '1px 1px 5px rgba(0, 0, 0, 0.7)',
+  };
+
+  const handleAddTask = () => {
+    navigate('/tasks/add');
   };
 
   return (
     <div style={backgroundStyle}>
       <div className='container'>
         <h2>My Tasks</h2>
-        {tasks.length === 0 ? ( // Check if there are no tasks
+        {tasks.length === 0 ? (
           <p>No tasks found. Please add some tasks!</p>
         ) : (
           <ul>
             {tasks.map((task) => (
               <li key={task._id}>
-                <Link to={`/tasks/${task._id}`} style={{ color: 'white', textDecoration: 'underline' }}>
-                  {task.title} - {task.status} - {task.priority} {/* Display task title, status, and priority */}
+                <Link to={`/tasks/${task._id}`} style={{ color: 'black', textDecoration: 'underline' }}>
+                  {task.title} - {task.status} - {task.priority}
                 </Link>
               </li>
             ))}
           </ul>
         )}
+        <button onClick={handleAddTask} className="add-task-button">
+          Add Task
+        </button>
       </div>
     </div>
   );

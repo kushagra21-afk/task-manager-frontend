@@ -1,27 +1,25 @@
-// src/pages/TaskDetails.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios'; // Import axios for API requests
-import { fetchUnsplashImage } from '../utils/fetchImage'; // Import the Unsplash image fetching function
+import axios from 'axios';
+import { fetchUnsplashImage } from '../utils/fetchImage';
 import "../styles.css";
 
 const TaskDetails = () => {
-  const { id } = useParams(); // Get task ID from URL parameters
+  const { id } = useParams();
   const [task, setTask] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
 
-  // Fetch task based on ID
   useEffect(() => {
     const fetchTask = async () => {
-      const token = localStorage.getItem('token'); // Get the token from localStorage
+      const token = localStorage.getItem('token');
 
       try {
-        const response = await axios.get(`https://task-manager-xtbs.onrender.com/api/tasks/${id}`, {
+        const response = await axios.get(`https://task-manager-xtbs.onrender.com/api/post/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Attach the JWT token
+            Authorization: `Bearer ${token}`,
           },
         });
-        setTask(response.data); // Set the task data
+        setTask(response.data);
       } catch (error) {
         console.error('Error fetching task:', error.response ? error.response.data : error.message);
       }
@@ -30,12 +28,11 @@ const TaskDetails = () => {
     fetchTask();
   }, [id]);
 
-  // Fetch Unsplash image based on task title
   useEffect(() => {
     if (task && task.title) {
       const fetchUnsplashImageForTask = async () => {
         try {
-          const image = await fetchUnsplashImage(task.title || 'task'); // Fetch image based on task title
+          const image = await fetchUnsplashImage(task.title || 'task');
           setImageUrl(image);
         } catch (error) {
           console.error('Failed to fetch Unsplash image:', error);
@@ -46,8 +43,7 @@ const TaskDetails = () => {
     }
   }, [task]);
 
-  // Display loading message or task not found
-  if (!task) return <p>Loading...</p>; // Show loading state until task is fetched
+  if (!task) return <p>Loading...</p>;
 
   return (
     <div className="container task-details">
@@ -57,7 +53,7 @@ const TaskDetails = () => {
         <h3>{task.title}</h3>
         <p><strong>Status:</strong> {task.status}</p>
         <p><strong>Description:</strong> {task.description}</p>
-        <p><strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}</p> {/* Format date */}
+        <p><strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}</p>
         <p><strong>Priority:</strong> {task.priority}</p>
       </div>
     </div>

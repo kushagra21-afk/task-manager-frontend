@@ -1,7 +1,7 @@
-// src/pages/Register.js
-import React, { useState } from 'react';
-import axios from 'axios'; // Import axios for API requests
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { fetchUnsplashImage } from '../utils/fetchImage';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -9,53 +9,67 @@ const Register = () => {
     email: '',
     password: '',
   });
-  const navigate = useNavigate(); // Hook to programmatically navigate
+  const [imageUrl, setImageUrl] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value }); // Update form data state
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     try {
-      await axios.post('https://task-manager-xtbs.onrender.com/api/auth/register', formData); // Send POST request to register
-      navigate('/'); // Redirect to login after successful registration
+      await axios.post('https://task-manager-xtbs.onrender.com/api/auth/register', formData);
+      navigate('/');
     } catch (error) {
-      console.error('Registration error:', error.response ? error.response.data : error.message); // Handle errors
+      console.error('Registration error:', error.response ? error.response.data : error.message);
     }
   };
 
+  useEffect(() => {
+    const getImage = async () => {
+      const image = await fetchUnsplashImage('beach');
+      setImageUrl(image);
+    };
+    getImage();
+  }, []);
+
   return (
-    <div className="container">
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Register</button>
-      </form>
+    <div className='main' style={{ backgroundImage: `url(${imageUrl})` }}>
+      <div className="container">
+        <h2>Register</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">Register</button>
+        </form>
+      </div>
+      <div className='render'>
+        <p><b>Please be patient, the backend takes time to boot!</b></p>
+      </div>
     </div>
   );
 };
