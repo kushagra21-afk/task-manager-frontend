@@ -9,7 +9,6 @@ const AddTask = () => {
     description: '',
     dueDate: '',
     status: 'To Do',
-    userId: '',
     priority: 'Medium',
   });
   const [imageUrl, setImageUrl] = useState('');
@@ -77,14 +76,6 @@ const AddTask = () => {
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </select>
-          <input
-            type="text"
-            name="userId"
-            placeholder="User ID"
-            value={taskData.userId}
-            onChange={handleChange}
-            required
-          />
           <select name="priority" value={taskData.priority} onChange={handleChange}>
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
