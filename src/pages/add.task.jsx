@@ -9,22 +9,22 @@ const AddTask = () => {
     description: '',
     dueDate: '',
     status: 'To Do', // Default status
-    userId: '',
+    userId: '', // Changed from assignedUser to userId
     priority: 'Medium', // Default priority
   });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setTaskData({ ...taskData, [name]: value });
+    setTaskData({ ...taskData, [name]: value }); // Update task data state
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token'); // Get the token from localStorage
-    console.log(token)
+
     try {
-      await axios.post('https://task-manager-xtbs.onrender.com/api/post', taskData, {
+      await axios.post('https://task-manager-xtbs.onrender.com/api/tasks', taskData, { // Ensure endpoint is correct
         headers: {
           Authorization: `Bearer ${token}`, // Attach the JWT token
           'Content-Type': 'application/json',
@@ -69,9 +69,9 @@ const AddTask = () => {
         </select>
         <input
           type="text"
-          name="userId"
-          placeholder="Assigned User"
-          value={taskData.assignedUser}
+          name="userId" // Changed input name from assignedUser to userId
+          placeholder="User ID" // Update placeholder accordingly
+          value={taskData.userId} // Bind to userId
           onChange={handleChange}
           required
         />
